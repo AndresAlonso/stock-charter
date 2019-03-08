@@ -1,0 +1,47 @@
+.App {
+  padding: 2rem;
+}
+
+.SearchPanel {
+  font-size: 1rem;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.SearchPanel__inputs {
+  height: 2rem;
+  padding-left: 1rem;
+  letter-spacing: 0.1rem;
+  margin-left: 10px;
+}
+
+.SearchPanel__textInput {
+  height: 2rem;
+  padding-left: 1rem;
+  letter-spacing: 0.1rem;
+}
+
+input[type='submit'] {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 0.72rem 1.25rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.SearchPanel__chart {
+  padding-top: 2rem;
+  font-size: 0.75rem;
+}
+
+.SearchPanel__inputs {
+  width: 100vw;
+}
+
+.SearchPanel__chartLabel {
+  padding-top: 1rem;
+  text-align: center;
+  text-decoration: underline;
+  font-size: 2rem;
+}
