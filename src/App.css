@@ -49,6 +49,7 @@ input[type='submit'] {
 .SP__chartLabel {
   padding-top: 2.5rem;
   text-align: center;
-  text-decoration: underline;
+  letter-spacing: 0.25rem;
+  /* text-decoration: underline; */
   font-size: 1.75rem;
 }
