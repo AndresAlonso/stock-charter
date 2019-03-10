@@ -18,7 +18,7 @@ export const DailyChart = ({ symbol, data }: any) => {
           <Line type="monotone" dataKey="close" stroke="#8884d8" />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
           <XAxis dataKey="tradingDay" />
-          <YAxis domain={['dataMin - 5', 'dataMax - 5']} />
+          <YAxis domain={['dataMin - 5', 'dataMax + 5']} />
         </LineChart>
       </ResponsiveContainer>
     </div>
