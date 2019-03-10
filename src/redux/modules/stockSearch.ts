@@ -1,8 +1,13 @@
 import { mergeMap, map, catchError } from 'rxjs/operators'
-import { ajax } from 'rxjs/ajax'
+import { ajax, AjaxResponse } from 'rxjs/ajax'
 import { ofType } from 'redux-observable'
 import { of } from 'rxjs'
-import { Action, SymbolHistoryRequest } from '../../types'
+import {
+  Action,
+  DailyStockPriceDetails,
+  SymbolHistoryRequest,
+  StockHistoryResponse,
+} from '../../types'
 import { API_KEY } from '../../configuration'
 
 // Global constants
@@ -13,6 +18,7 @@ const BASE_HISTORY_URL =
 const FETCH_HISTORICAL = 'FETCH_HISTORICAL'
 const FETCH_HISTORICAL_FULFILLED = 'FETCH_HISTORICAL_FULFILLED'
 const FETCH_HISTORICAL_REJECTED = 'FETCH_HISTORICAL_REJECTED'
+const REMOVE_SEARCH_ERROR = 'REMOVE_SEARCH_ERROR'
 
 // action creators
 export const fetchHistorical = (
@@ -22,9 +28,17 @@ export const fetchHistorical = (
   payload: historyRequestOptions,
 })
 
+export const removeSearchError = () => ({ type: REMOVE_SEARCH_ERROR })
+
 const fetchHistoricalFulfilled = (historyResponse: any) => ({
   type: FETCH_HISTORICAL_FULFILLED,
   payload: historyResponse,
+})
+
+const fetchHistoricalRejected = (errorMessage: any) => ({
+  type: FETCH_HISTORICAL_REJECTED,
+  payload: errorMessage,
+  error: true,
 })
 
 const formatDate = (date: Date) => {
@@ -56,18 +70,20 @@ export const stockSearchEpic = (action$: any) =>
         method: 'GET',
         timeout: 10000,
       }).pipe(
-        map((historyResponse: any) =>
-          fetchHistoricalFulfilled({
-            symbol: payload,
-            historicalData: historyResponse.response,
-          }),
-        ),
+        map((ajaxResponse: AjaxResponse) => {
+          const response: StockHistoryResponse = ajaxResponse.response
+          const { status, results } = response
+          const { code, message } = status
+
+          return code === 200
+            ? fetchHistoricalFulfilled({
+                symbol: payload.symbol,
+                historicalData: results,
+              })
+            : fetchHistoricalRejected(message)
+        }),
         catchError((error: any) =>
-          of({
-            type: FETCH_HISTORICAL_REJECTED,
-            payload: error.xhr.response,
-            error: true,
-          }),
+          of(fetchHistoricalRejected(error.xhr.response)),
         ),
       ),
     ),
@@ -75,9 +91,15 @@ export const stockSearchEpic = (action$: any) =>
 
 const initialState = {
   loading: false,
-  currentSearch: { symbol: '', historicalData: {} },
-  searchHistory: [],
+  error: null,
+  currentSearch: { symbol: '', historicalData: null },
 }
+
+const removeExtraneousKeys = (historicalData: DailyStockPriceDetails[]) =>
+  historicalData.map(({ close, tradingDay }: DailyStockPriceDetails) => ({
+    close,
+    tradingDay,
+  }))
 
 export default (state: any = initialState, action: Action) => {
   const { type, payload } = action
@@ -86,9 +108,19 @@ export default (state: any = initialState, action: Action) => {
     case FETCH_HISTORICAL:
       return { ...state, loading: true }
     case FETCH_HISTORICAL_FULFILLED:
-      return { ...state, currentSearch: payload, loading: false }
+      const { symbol, historicalData } = payload
+      return {
+        ...state,
+        currentSearch: {
+          symbol,
+          historicalData: removeExtraneousKeys(historicalData),
+        },
+        loading: false,
+      }
     case FETCH_HISTORICAL_REJECTED:
-      return { ...state, loading: false }
+      return { ...state, loading: false, error: payload }
+    case REMOVE_SEARCH_ERROR:
+      return { ...state, error: null }
     default:
       return state
   }
