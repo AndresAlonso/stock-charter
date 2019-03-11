@@ -36,6 +36,7 @@ const SearchPanel = (props: SearchPanelData) => {
         error={error}
         historySearch={historySearch}
         loading={loading}
+        symbol={symbol}
       />
       {historicalData && <DailyChart symbol={symbol} data={historicalData} />}
     </div>

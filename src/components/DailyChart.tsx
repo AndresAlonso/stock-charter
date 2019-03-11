@@ -24,7 +24,7 @@ export const DailyChart = ({ symbol, data }: any) => {
           />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
           <XAxis dataKey="tradingDay" />
-          <YAxis domain={['dataMin - 5', 'dataMax + 5']} />
+          <YAxis domain={['dataMin', 'dataMax + 5']} />
           <Tooltip />
         </AreaChart>
       </ResponsiveContainer>

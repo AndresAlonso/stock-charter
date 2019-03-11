@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SymbolHistoryRequest } from '../types'
 
 const searchSubmit = (
@@ -17,8 +17,15 @@ export const SearchControls = ({
   error,
   historySearch,
   loading,
+  symbol,
 }: any) => {
   const [ticker, setTicker] = useState('')
+
+  useEffect(() => {
+    const stockSymbol = symbol ? `: ${symbol}` : ''
+    document.title = `Charts${stockSymbol}`
+  })
+
   return (
     <form
       onSubmit={e => searchSubmit(e, historySearch, ticker, setTicker)}
