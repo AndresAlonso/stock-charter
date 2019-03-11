@@ -28,6 +28,11 @@
   flex: 9 1 80%;
 }
 
+.SP__inputs__textInput:focus {
+  box-shadow: none;
+  outline: none;
+}
+
 .SP__inputs__textInput__error {
   border: 1px solid red;
 }
@@ -36,7 +41,7 @@ input[type='submit'] {
   background-color: #4caf50;
   border: none;
   color: white;
-  padding: 0.72rem 1.25rem;
+  padding: 0.7rem 1.25rem;
   text-decoration: none;
   cursor: pointer;
 }
